@@ -1,0 +1,34 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    platform: linux/arm64
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Lotexa@Strong123"
+    ports:
+      - "1433:1433"
+    tmpfs:
+      - /var/opt/mssql
+
+  api:
+    build:
+      context: ./src
+      dockerfile: Lotexa.Api/Dockerfile
+    ports:
+      - "5050:5000"
+    depends_on:
+      - sqlserver
+    restart: on-failure:5
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=LotexaDb;User Id=sa;Password=Lotexa@Strong123;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False"
+      ASPNETCORE_ENVIRONMENT: "Development"
+
+  web:
+    build:
+      context: ./Lotexa.Web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:5050/api"

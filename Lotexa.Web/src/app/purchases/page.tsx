@@ -42,7 +42,7 @@ export default function PurchasesPage() {
           api.get("/crops"),
           api.get("/farmers"),
           api.get("/warehouses"),
-          api.get("/unitsofmeasure"),
+          api.get("/units-of-measure"),
         ]);
       setLots(lotsRes.data);
       setCrops(cropsRes.data);
@@ -162,11 +162,10 @@ export default function PurchasesPage() {
                     <td className="px-4 py-3">{lot.purchaseDate}</td>
                     <td className="px-4 py-3">
                       <span
-                        className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
-                          lot.isClosed
+                        className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${lot.isClosed
                             ? "bg-gray-100 text-gray-500"
                             : "bg-emerald-50 text-emerald-700"
-                        }`}
+                          }`}
                       >
                         {lot.isClosed ? "Closed" : "Open"}
                       </span>

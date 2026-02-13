@@ -3,7 +3,9 @@ using Lotexa.Application.DTOs;
 using Lotexa.Application.Interfaces;
 using Lotexa.Domain.Entities;
 using Lotexa.Domain.Enums;
+using Lotexa.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +17,13 @@ namespace Lotexa.Api.Controllers;
 public class TradersController : ControllerBase
 {
     private readonly IUnitOfWork _uow;
-    public TradersController(IUnitOfWork uow) => _uow = uow;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public TradersController(IUnitOfWork uow, UserManager<ApplicationUser> userManager)
+    {
+        _uow = uow;
+        _userManager = userManager;
+    }
 
     [HttpGet]
     public async Task<ActionResult<List<TraderDto>>> GetAll(CancellationToken ct)
@@ -63,7 +71,33 @@ public class TradersController : ControllerBase
         };
 
         if (User.IsInRole(UserRoles.Buyer))
+        {
             trader.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+        else if (User.IsInRole(UserRoles.Admin))
+        {
+            // Auto-create Identity user for this trader
+            var email = request.Email ?? $"{request.Phone}@lotexa.local";
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser == null)
+            {
+                var appUser = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    PhoneNumber = request.Phone,
+                    FullName = request.Name,
+                    EmailConfirmed = true
+                };
+                var defaultPassword = $"{request.Phone}@123";
+                var result = await _userManager.CreateAsync(appUser, defaultPassword);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(appUser, UserRoles.Buyer);
+                    trader.UserId = appUser.Id;
+                }
+            }
+        }
 
         await _uow.Repository<Trader>().AddAsync(trader, ct);
         await _uow.SaveChangesAsync(ct);

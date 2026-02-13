@@ -2,11 +2,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Lotexa.Application.DTOs;
+using Lotexa.Application.Interfaces;
+using Lotexa.Domain.Entities;
 using Lotexa.Domain.Enums;
 using Lotexa.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Lotexa.Api.Controllers;
@@ -17,19 +20,32 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly IUnitOfWork _uow;
 
-    public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration, IUnitOfWork uow)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _uow = uow;
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        ApplicationUser? user;
+
+        if (request.Identifier.Contains('@'))
+        {
+            user = await _userManager.FindByEmailAsync(request.Identifier);
+        }
+        else
+        {
+            user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == request.Identifier);
+        }
+
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-            return Unauthorized(new { message = "Invalid email or password" });
+            return Unauthorized(new { message = "Invalid credentials" });
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = GenerateJwtToken(user, roles);
@@ -53,10 +69,16 @@ public class AuthController : ControllerBase
         if (existingUser != null)
             return BadRequest(new { message = "Email already registered" });
 
+        var existingPhone = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+        if (existingPhone != null)
+            return BadRequest(new { message = "Phone number already registered" });
+
         var user = new ApplicationUser
         {
             UserName = request.Email,
             Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
             FullName = request.FullName,
             EmailConfirmed = true
         };
@@ -66,6 +88,32 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = string.Join(", ", result.Errors.Select(e => e.Description)) });
 
         await _userManager.AddToRoleAsync(user, request.Role);
+
+        // Auto-create Farmer or Trader profile linked to this user
+        if (request.Role == UserRoles.Farmer)
+        {
+            var farmer = new Farmer
+            {
+                Name = request.FullName,
+                Phone = request.PhoneNumber,
+                Email = request.Email,
+                UserId = user.Id
+            };
+            await _uow.Repository<Farmer>().AddAsync(farmer);
+            await _uow.SaveChangesAsync();
+        }
+        else if (request.Role == UserRoles.Buyer)
+        {
+            var trader = new Trader
+            {
+                Name = request.FullName,
+                Phone = request.PhoneNumber,
+                Email = request.Email,
+                UserId = user.Id
+            };
+            await _uow.Repository<Trader>().AddAsync(trader);
+            await _uow.SaveChangesAsync();
+        }
 
         var roles = new List<string> { request.Role };
         var token = GenerateJwtToken(user, roles);

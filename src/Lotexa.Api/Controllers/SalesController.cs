@@ -46,6 +46,18 @@ public class SalesController : ControllerBase
             .Include(s => s.Expenses).Include(s => s.Payments)
             .AsQueryable();
 
+        // Role-based filtering: Buyer sees only their own sales
+        if (User.IsInRole("Buyer"))
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var trader = await _uow.Repository<Trader>().Query()
+                .FirstOrDefaultAsync(t => t.UserId == userId, ct);
+            if (trader != null)
+                query = query.Where(s => s.TraderId == trader.Id);
+            else
+                return Ok(new List<SaleDto>());
+        }
+
         if (cropId.HasValue) query = query.Where(s => s.CropId == cropId.Value);
         if (traderId.HasValue) query = query.Where(s => s.TraderId == traderId.Value);
         if (from.HasValue) query = query.Where(s => s.SaleDate >= from.Value);

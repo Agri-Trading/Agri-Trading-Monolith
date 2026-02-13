@@ -38,8 +38,13 @@ public class ReportsController : ControllerBase
         => Ok(await _fifoService.PreviewProfitAsync(cropId, qty, sellPrice, ct));
 
     [HttpGet("breakeven")]
-    public async Task<ActionResult<BreakEvenDto>> BreakEven([FromQuery] int cropId, CancellationToken ct)
-        => Ok(await _inventoryService.GetBreakEvenAsync(cropId, ct));
+    public async Task<ActionResult> BreakEven([FromQuery] int? cropId, CancellationToken ct)
+    {
+        if (cropId.HasValue)
+            return Ok(await _inventoryService.GetBreakEvenAsync(cropId.Value, ct));
+
+        return Ok(await _inventoryService.GetAllBreakEvensAsync(ct));
+    }
 
     [HttpGet("sale-profit/{saleId}")]
     public async Task<ActionResult<SaleProfitDto>> SaleProfit(int saleId, CancellationToken ct)

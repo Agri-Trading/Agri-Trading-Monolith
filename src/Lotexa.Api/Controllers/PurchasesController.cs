@@ -57,6 +57,18 @@ public class PurchasesController : ControllerBase
             .Include(l => l.Tests).Include(l => l.Adjustments).Include(l => l.SaleAllocations)
             .AsQueryable();
 
+        // Role-based filtering: Farmer sees only their own lots
+        if (User.IsInRole("Farmer"))
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var farmer = await _uow.Repository<Farmer>().Query()
+                .FirstOrDefaultAsync(f => f.UserId == userId, ct);
+            if (farmer != null)
+                query = query.Where(l => l.FarmerId == farmer.Id);
+            else
+                return Ok(new List<PurchaseLotDto>());
+        }
+
         if (cropId.HasValue) query = query.Where(l => l.CropId == cropId.Value);
         if (farmerId.HasValue) query = query.Where(l => l.FarmerId == farmerId.Value);
         if (from.HasValue) query = query.Where(l => l.PurchaseDate >= from.Value);

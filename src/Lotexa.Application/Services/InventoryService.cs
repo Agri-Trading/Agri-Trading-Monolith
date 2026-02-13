@@ -34,6 +34,7 @@ public class InventoryService : IInventoryService
             .Include(l => l.Adjustments)
             .Include(l => l.SaleAllocations)
             .Include(l => l.Crop)
+            .Include(l => l.UnitOfMeasure)
             .Where(l => !l.IsClosed)
             .AsQueryable();
 
@@ -49,12 +50,28 @@ public class InventoryService : IInventoryService
                 CropId = g.Key.CropId,
                 CropName = g.Key.Name,
                 TotalAvailableQty = g.Sum(l =>
-                    l.Quantity
-                    + l.Adjustments.Sum(a => a.QtyDelta)
-                    - l.SaleAllocations.Sum(sa => sa.QuantityAllocated))
+                {
+                    var available = l.Quantity
+                        + l.Adjustments.Sum(a => a.QtyDelta)
+                        - l.SaleAllocations.Sum(sa => sa.QuantityAllocated);
+                    var factor = GetKgConversionFactor(l.UnitOfMeasure?.Code ?? "kg");
+                    return available * factor;
+                })
             })
             .Where(s => s.TotalAvailableQty > 0)
             .ToList();
+    }
+
+    private static decimal GetKgConversionFactor(string uomCode)
+    {
+        return uomCode.ToLowerInvariant() switch
+        {
+            "kg" => 1m,
+            "quintal" => 100m,
+            "ton" or "tonne" => 1000m,
+            "g" or "gram" => 0.001m,
+            _ => 1m // default: assume kg if unknown
+        };
     }
 
     public async Task<List<LotStockDto>> GetLotStockAsync(int? cropId, CancellationToken ct = default)
@@ -136,5 +153,49 @@ public class InventoryService : IInventoryService
             TotalAvailableQty = totalQty,
             WeightedAvgCostPerUom = totalQty > 0 ? totalCost / totalQty : 0
         };
+    }
+
+    public async Task<List<BreakEvenDto>> GetAllBreakEvensAsync(CancellationToken ct = default)
+    {
+        var lots = await _uow.PurchaseLots.Query()
+            .Include(l => l.Adjustments)
+            .Include(l => l.SaleAllocations)
+            .Include(l => l.Expenses)
+            .Include(l => l.Crop)
+            .Where(l => !l.IsClosed)
+            .ToListAsync(ct);
+
+        return lots
+            .GroupBy(l => new { l.CropId, CropName = l.Crop.Name })
+            .Select(g =>
+            {
+                decimal totalQty = 0;
+                decimal totalCost = 0;
+
+                foreach (var l in g)
+                {
+                    var available = l.Quantity
+                        + l.Adjustments.Sum(a => a.QtyDelta)
+                        - l.SaleAllocations.Sum(sa => sa.QuantityAllocated);
+
+                    if (available <= 0) continue;
+
+                    var totalExpenses = l.Expenses.Sum(e => e.Amount);
+                    var unitCost = l.BuyPricePerUom + (l.OtherCharges + totalExpenses) / l.Quantity;
+
+                    totalQty += available;
+                    totalCost += available * unitCost;
+                }
+
+                return new BreakEvenDto
+                {
+                    CropId = g.Key.CropId,
+                    CropName = g.Key.CropName,
+                    TotalAvailableQty = totalQty,
+                    WeightedAvgCostPerUom = totalQty > 0 ? totalCost / totalQty : 0
+                };
+            })
+            .Where(b => b.TotalAvailableQty > 0)
+            .ToList();
     }
 }

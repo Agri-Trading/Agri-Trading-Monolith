@@ -24,7 +24,7 @@ export default function FarmersPage() {
 
   const load = async () => {
     setLoading(true);
-    try { setFarmers((await api.get("/farmers")).data); } catch {} finally { setLoading(false); }
+    try { setFarmers((await api.get("/farmers")).data); } catch { } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -35,7 +35,7 @@ export default function FarmersPage() {
     try {
       await api.post("/farmers", {
         name: form.name,
-        phone: form.phone || null,
+        phone: form.phone,
         email: form.email || null,
         addresses: form.addressLine1
           ? [{ addressLine1: form.addressLine1, addressLine2: form.addressLine2 || null, city: form.city, state: form.state, pinCode: form.pinCode, isPrimary: true }]
@@ -44,7 +44,7 @@ export default function FarmersPage() {
       setShowForm(false);
       setForm({ name: "", phone: "", email: "", addressLine1: "", addressLine2: "", city: "", state: "", pinCode: "" });
       load();
-    } catch {} finally { setSaving(false); }
+    } catch { } finally { setSaving(false); }
   };
 
   return (
@@ -67,7 +67,7 @@ export default function FarmersPage() {
           <form onSubmit={handleCreate} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Inp label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
-              <Inp label="Phone" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
+              <Inp label="Phone *" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} type="tel" required />
               <Inp label="Email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} type="email" />
             </div>
             <div className="border-t border-gray-200 pt-4">
@@ -103,7 +103,10 @@ export default function FarmersPage() {
                   <div>
                     <div className="font-medium text-gray-900">{f.name}</div>
                     <div className="text-xs text-gray-500">
-                      {[f.phone, f.email].filter(Boolean).join(" | ") || "No contact info"}
+                      {f.phone && <span>📞 {f.phone}</span>}
+                      {f.phone && f.email && <span> | </span>}
+                      {f.email && <span>✉️ {f.email}</span>}
+                      {!f.phone && !f.email && "No contact info"}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

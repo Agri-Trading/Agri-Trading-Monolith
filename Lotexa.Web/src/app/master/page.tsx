@@ -26,9 +26,8 @@ export default function MasterDataPage() {
             <button
               key={s.key}
               onClick={() => setSection(s.key)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                section === s.key ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${section === s.key ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               {s.label}
             </button>
@@ -52,7 +51,7 @@ function CropsSection() {
 
   const load = async () => {
     setLoading(true);
-    try { setItems((await api.get("/crops")).data); } catch {} finally { setLoading(false); }
+    try { setItems((await api.get("/crops")).data); } catch { } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -64,7 +63,7 @@ function CropsSection() {
       await api.post("/crops", { name, description: desc || null });
       setName(""); setDesc("");
       load();
-    } catch {} finally { setSaving(false); }
+    } catch { } finally { setSaving(false); }
   };
 
   return (
@@ -112,7 +111,7 @@ function UomSection() {
 
   const load = async () => {
     setLoading(true);
-    try { setItems((await api.get("/unitsofmeasure")).data); } catch {} finally { setLoading(false); }
+    try { setItems((await api.get("/units-of-measure")).data); } catch { } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -121,10 +120,10 @@ function UomSection() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post("/unitsofmeasure", { code, name });
+      await api.post("/units-of-measure", { code, name });
       setCode(""); setName("");
       load();
-    } catch {} finally { setSaving(false); }
+    } catch { } finally { setSaving(false); }
   };
 
   return (
@@ -172,7 +171,7 @@ function WarehousesSection() {
 
   const load = async () => {
     setLoading(true);
-    try { setItems((await api.get("/warehouses")).data); } catch {} finally { setLoading(false); }
+    try { setItems((await api.get("/warehouses")).data); } catch { } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -184,7 +183,7 @@ function WarehousesSection() {
       await api.post("/warehouses", { name, location: location || null });
       setName(""); setLocation("");
       load();
-    } catch {} finally { setSaving(false); }
+    } catch { } finally { setSaving(false); }
   };
 
   return (

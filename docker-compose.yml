@@ -12,7 +12,7 @@ services:
 
   api:
     build:
-      context: ./src
+      context: ./backend
       dockerfile: Lotexa.Api/Dockerfile
     ports:
       - "5050:5000"

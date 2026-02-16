@@ -17,7 +17,7 @@ export default function MasterDataPage() {
           <p className="text-gray-500 mt-1">Manage crops, units of measure, and warehouses</p>
         </div>
 
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+        <div className="flex flex-wrap gap-1 bg-gray-100 rounded-lg p-1 w-full sm:w-fit">
           {([
             { key: "crops", label: "Crops" },
             { key: "uom", label: "Units of Measure" },

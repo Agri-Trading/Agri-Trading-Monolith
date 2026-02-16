@@ -85,7 +85,7 @@ export default function PurchasesPage() {
   return (
     <Shell>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="page-header">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Purchase Lots</h2>
             <p className="text-gray-500 mt-1">Manage commodity purchase lots</p>
@@ -163,8 +163,8 @@ export default function PurchasesPage() {
                     <td className="px-4 py-3">
                       <span
                         className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${lot.isClosed
-                            ? "bg-gray-100 text-gray-500"
-                            : "bg-emerald-50 text-emerald-700"
+                          ? "bg-gray-100 text-gray-500"
+                          : "bg-emerald-50 text-emerald-700"
                           }`}
                       >
                         {lot.isClosed ? "Closed" : "Open"}

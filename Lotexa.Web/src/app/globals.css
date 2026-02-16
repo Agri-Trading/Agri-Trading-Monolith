@@ -20,6 +20,8 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--clr-surface);
   color: #1e293b;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ── Glassmorphism Card ── */
@@ -32,6 +34,7 @@ body {
   box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .glass-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
@@ -53,11 +56,15 @@ body {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
+  min-height: 44px;
+  /* Touch-friendly */
 }
+
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
+
 .nav-link.active {
   background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
@@ -70,10 +77,12 @@ body {
   padding: 0.625rem 0.875rem;
   border: 1.5px solid #d1d5db;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  /* Prevents iOS zoom on focus */
   background: #ffffff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .premium-input:focus {
   outline: none;
   border-color: var(--clr-primary);
@@ -90,12 +99,16 @@ body {
   font-weight: 600;
   border: none;
   cursor: pointer;
+  min-height: 44px;
+  /* Touch-friendly */
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
+
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
 }
+
 .btn-primary:active {
   transform: translateY(0);
 }
@@ -108,6 +121,7 @@ body {
   padding: 1.25rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .stock-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
@@ -115,9 +129,17 @@ body {
 
 /* ── Fade-in animation ── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 .animate-fade-in {
   animation: fadeInUp 0.4s ease forwards;
 }
@@ -132,7 +154,34 @@ body {
   cursor: pointer;
   transition: border-color 0.2s;
 }
+
 .uom-select:focus {
   outline: none;
   border-color: var(--clr-primary);
+}
+
+/* ── Responsive Page Header ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 639px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── Mobile-friendly tables ── */
+@media (max-width: 639px) {
+
+  .glass-card:hover,
+  .stock-card:hover {
+    transform: none;
+    /* Disable hover lift on touch */
+  }
 }

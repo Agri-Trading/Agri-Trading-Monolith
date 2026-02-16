@@ -12,7 +12,7 @@ export default function ReportsPage() {
   const [crops, setCrops] = useState<CropDto[]>([]);
 
   useEffect(() => {
-    api.get("/crops").then((r) => setCrops(r.data)).catch(() => {});
+    api.get("/crops").then((r) => setCrops(r.data)).catch(() => { });
   }, []);
 
   return (
@@ -23,7 +23,7 @@ export default function ReportsPage() {
           <p className="text-gray-500 mt-1">Lot aging, profit preview, and sale profit analysis</p>
         </div>
 
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+        <div className="flex flex-wrap gap-1 bg-gray-100 rounded-lg p-1 w-full sm:w-fit">
           {([
             { key: "lot-stock", label: "Lot Stock Aging" },
             { key: "profit-preview", label: "Profit Preview" },
@@ -32,9 +32,8 @@ export default function ReportsPage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                tab === t.key ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === t.key ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               {t.label}
             </button>
@@ -106,9 +105,8 @@ function LotStockReport({ crops }: { crops: CropDto[] }) {
                   <td className="px-4 py-3 text-right">{d.quantity}</td>
                   <td className="px-4 py-3 text-right font-semibold">{d.availableQty}</td>
                   <td className="px-4 py-3 text-right">
-                    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
-                      d.daysSincePurchase > 90 ? "bg-red-50 text-red-600" : d.daysSincePurchase > 30 ? "bg-yellow-50 text-yellow-600" : "bg-emerald-50 text-emerald-600"
-                    }`}>
+                    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${d.daysSincePurchase > 90 ? "bg-red-50 text-red-600" : d.daysSincePurchase > 30 ? "bg-yellow-50 text-yellow-600" : "bg-emerald-50 text-emerald-600"
+                      }`}>
                       {d.daysSincePurchase}d
                     </span>
                   </td>

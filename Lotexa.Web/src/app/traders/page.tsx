@@ -50,7 +50,7 @@ export default function TradersPage() {
   return (
     <Shell>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="page-header">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Traders</h2>
             <p className="text-gray-500 mt-1">Manage trader profiles and addresses</p>

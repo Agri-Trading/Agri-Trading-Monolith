@@ -67,7 +67,7 @@ export default function SalesPage() {
   return (
     <Shell>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="page-header">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Sales</h2>
             <p className="text-gray-500 mt-1">FIFO-allocated sales with profit tracking</p>
@@ -126,7 +126,7 @@ export default function SalesPage() {
                       <div className="text-xs text-gray-500">{s.traderName} &middot; {s.saleDate}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-6 text-sm">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
                     <div className="text-right">
                       <div className="text-gray-500">Qty</div>
                       <div className="font-semibold">{s.quantity}</div>

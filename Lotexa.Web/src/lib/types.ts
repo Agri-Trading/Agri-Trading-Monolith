@@ -4,6 +4,7 @@ export interface TraderDto { id: number; name: string; phone: string; email?: st
 export interface TraderAddressDto { id: number; addressLine1: string; addressLine2?: string; city: string; state: string; pinCode: string; isPrimary: boolean }
 export interface CropDto { id: number; name: string; isActive: boolean }
 export interface UomDto { id: number; code: string; name: string; isActive: boolean }
+export type UnitOfMeasureDto = UomDto;
 export interface WarehouseDto { id: number; name: string; location?: string; isActive: boolean }
 
 export interface PurchaseLotDto { id: number; lotNumber: string; cropId: number; cropName: string; farmerId: number; farmerName: string; warehouseId: number; warehouseName: string; unitOfMeasureId: number; uomCode: string; quantity: number; buyPricePerUom: number; otherCharges: number; purchaseDate: string; notes?: string; isClosed: boolean; availableQty: number; totalCost: number; expenses: LotExpenseDto[]; tests: LotTestDto[]; adjustments: LotAdjustmentDto[] }

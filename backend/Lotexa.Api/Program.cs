@@ -69,10 +69,12 @@ builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 builder.Services.AddControllers();
 
 // CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:5173", "http://localhost:3000", "http://localhost:5050"];
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5050")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod());
 });

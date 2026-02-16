@@ -8,14 +8,13 @@ on:
       - ".github/workflows/deploy-backend-dev.yml"
   workflow_dispatch:
 
-env:
-  REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-  IMAGE_NAME: lotexa-api
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: Dev
+    env:
+      REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+      IMAGE_NAME: lotexa-api
 
     steps:
       - name: Checkout code

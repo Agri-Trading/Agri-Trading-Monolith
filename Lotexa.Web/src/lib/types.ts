@@ -2,7 +2,7 @@ export interface FarmerDto { id: number; name: string; phone: string; email?: st
 export interface FarmerAddressDto { id: number; addressLine1: string; addressLine2?: string; city: string; state: string; pinCode: string; isPrimary: boolean }
 export interface TraderDto { id: number; name: string; phone: string; email?: string; isActive: boolean; addresses: TraderAddressDto[] }
 export interface TraderAddressDto { id: number; addressLine1: string; addressLine2?: string; city: string; state: string; pinCode: string; isPrimary: boolean }
-export interface CropDto { id: number; name: string; isActive: boolean }
+export interface CropDto { id: number; name: string; description?: string; isActive: boolean }
 export interface UomDto { id: number; code: string; name: string; isActive: boolean }
 export type UnitOfMeasureDto = UomDto;
 export interface WarehouseDto { id: number; name: string; location?: string; isActive: boolean }

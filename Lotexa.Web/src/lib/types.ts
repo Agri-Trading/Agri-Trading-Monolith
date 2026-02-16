@@ -19,6 +19,11 @@ export interface PaymentDto { id: number; amount: number; paymentDate: string; p
 
 export interface StockSummaryDto { cropId: number; cropName: string; totalAvailableQty: number }
 export interface BreakEvenDto { cropId: number; cropName: string; totalAvailableQty: number; weightedAvgCostPerUom: number }
-export interface PriceQuoteDto { id: number; cropId: number; cropName: string; traderId: number; traderName: string; pricePerUom: number; quoteDate: string; status: string; notes?: string }
+export interface PriceQuoteDto { id: number; cropId: number; cropName: string; traderId: number; traderName: string; pricePerUom: number; quoteDate: string; status: string; notes?: string; isActive: boolean }
 export interface CreatePurchaseLotRequest { cropId: number; farmerId: number; warehouseId: number; unitOfMeasureId: number; quantity: number; buyPricePerUom: number; otherCharges: number; purchaseDate: string; notes?: string }
 export interface CreateSaleRequest { cropId: number; traderId: number; quantity: number; sellPricePerUom: number; saleDate: string; notes?: string }
+
+export interface LotStockDto { lotId: number; lotNumber: string; cropName: string; farmerName: string; purchaseDate: string; quantity: number; availableQty: number; daysSincePurchase: number; unitCost: number }
+export interface ProfitAllocationDto { lotNumber: string; qtyFromLot: number; costPerUom: number }
+export interface ProfitPreviewDto { cropName: string; revenue: number; estimatedCost: number; estimatedProfit: number; allocations: ProfitAllocationDto[] }
+export interface SaleProfitDto { cropName: string; traderName: string; saleDate: string; quantity: number; revenue: number; totalCost: number; saleExpenses: number; netProfit: number }

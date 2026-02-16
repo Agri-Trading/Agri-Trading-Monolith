@@ -31,8 +31,6 @@ jobs:
       - name: Build Next.js app
         run: npm run build
         working-directory: Lotexa.Web
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
       - name: Prepare standalone package
         run: |

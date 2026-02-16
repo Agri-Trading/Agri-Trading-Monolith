@@ -40,6 +40,7 @@ jobs:
           if [ -d "Lotexa.Web/public" ]; then
             cp -r Lotexa.Web/public Lotexa.Web/.next/standalone/public
           fi
+          echo '{"scripts":{"start":"HOSTNAME=0.0.0.0 node server.js"}}' > Lotexa.Web/.next/standalone/package.json
           cd Lotexa.Web/.next/standalone
           zip -r ../../../frontend.zip .
 
@@ -49,4 +50,3 @@ jobs:
           app-name: ${{ secrets.AZURE_FRONTEND_APP_NAME }}
           publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
           package: frontend.zip
-          startup-command: "HOSTNAME=0.0.0.0 node server.js"

@@ -12,34 +12,43 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: Dev
-    env:
-      REGISTRY: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-      IMAGE_NAME: lotexa-web
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to Azure Container Registry
-        uses: docker/login-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          registry: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Lotexa.Web/package-lock.json
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./Lotexa.Web
-          file: ./Lotexa.Web/Dockerfile
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: Install dependencies
+        run: npm ci
+        working-directory: Lotexa.Web
+
+      - name: Build Next.js app
+        run: npm run build
+        working-directory: Lotexa.Web
+
+      - name: Zip standalone output
+        run: |
+          cd Lotexa.Web/.next/standalone
+          zip -r ../../../frontend.zip .
+          cd ../../../
+          cd Lotexa.Web/.next/static
+          zip -r ../../../frontend.zip .next/static
+          cd ../../../
+          if [ -d "Lotexa.Web/public" ]; then
+            cd Lotexa.Web/public
+            zip -r ../../frontend.zip public
+            cd ../../
+          fi
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.AZURE_FRONTEND_APP_NAME }}
           publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          package: frontend.zip

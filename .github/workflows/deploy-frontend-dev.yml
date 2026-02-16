@@ -34,19 +34,14 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
-      - name: Zip standalone output
+      - name: Prepare standalone package
         run: |
+          cp -r Lotexa.Web/.next/static Lotexa.Web/.next/standalone/.next/static
+          if [ -d "Lotexa.Web/public" ]; then
+            cp -r Lotexa.Web/public Lotexa.Web/.next/standalone/public
+          fi
           cd Lotexa.Web/.next/standalone
           zip -r ../../../frontend.zip .
-          cd ../../../
-          cd Lotexa.Web/.next/static
-          zip -r ../../../frontend.zip .next/static
-          cd ../../../
-          if [ -d "Lotexa.Web/public" ]; then
-            cd Lotexa.Web/public
-            zip -r ../../frontend.zip public
-            cd ../../
-          fi
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3

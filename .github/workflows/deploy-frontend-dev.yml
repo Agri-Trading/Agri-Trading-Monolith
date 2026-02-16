@@ -31,6 +31,8 @@ jobs:
       - name: Build Next.js app
         run: npm run build
         working-directory: Lotexa.Web
+        env:
+          NEXT_PUBLIC_API_URL: https://backend-lotexa-agri-trading-bbbmcsh4hjdagrhw.southindia-01.azurewebsites.net/api
 
       - name: Prepare standalone package
         run: |

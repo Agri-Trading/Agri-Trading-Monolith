@@ -89,7 +89,7 @@ public class FarmersController : ControllerBase
                     FullName = request.Name,
                     EmailConfirmed = true
                 };
-                var defaultPassword = $"{request.Phone}@123";
+                var defaultPassword = $"{request.Phone}@Pass123";
                 var result = await _userManager.CreateAsync(appUser, defaultPassword);
                 if (result.Succeeded)
                 {

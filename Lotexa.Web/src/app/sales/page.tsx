@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Shell from "@/components/Shell";
 import api from "@/lib/api";
 import type { SaleDto, CropDto, TraderDto } from "@/lib/types";
@@ -122,7 +123,13 @@ export default function SalesPage() {
                 >
                   <div className="flex items-center gap-4">
                     <div>
-                      <div className="font-medium text-gray-900">{s.cropName}</div>
+                      <Link
+                        href={`/sales/${s.id}`}
+                        className="font-medium text-emerald-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {s.cropName}
+                      </Link>
                       <div className="text-xs text-gray-500">{s.traderName} &middot; {s.saleDate}</div>
                     </div>
                   </div>

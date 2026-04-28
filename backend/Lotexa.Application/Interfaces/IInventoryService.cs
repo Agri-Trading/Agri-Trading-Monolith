@@ -9,4 +9,5 @@ public interface IInventoryService
     Task<List<LotStockDto>> GetLotStockAsync(int? cropId, CancellationToken ct = default);
     Task<BreakEvenDto> GetBreakEvenAsync(int cropId, CancellationToken ct = default);
     Task<List<BreakEvenDto>> GetAllBreakEvensAsync(CancellationToken ct = default);
+    Task<List<CropPricingDto>> GetPricingAnalysisAsync(CancellationToken ct = default);
 }

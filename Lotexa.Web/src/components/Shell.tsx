@@ -13,6 +13,7 @@ const allNav = [
   { href: "/farmers", label: "Farmers", icon: "🌾", roles: ["Admin", "Farmer"] },
   { href: "/traders", label: "Traders", icon: "🤝", roles: ["Admin", "Buyer"] },
   { href: "/reports", label: "Reports", icon: "📈", roles: ["Admin", "Farmer", "Buyer"] },
+  { href: "/pricing", label: "Pricing", icon: "🏷️", roles: ["Admin", "Buyer"] },
   { href: "/master", label: "Master Data", icon: "⚙️", roles: ["Admin"] },
 ];
 

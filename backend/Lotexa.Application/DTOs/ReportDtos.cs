@@ -59,3 +59,27 @@ public class SaleProfitDto
     public decimal SaleExpenses { get; set; }
     public decimal NetProfit { get; set; }
 }
+
+public class LotPricingDto
+{
+    public int LotId { get; set; }
+    public string LotNumber { get; set; } = string.Empty;
+    public string FarmerName { get; set; } = string.Empty;
+    public string WarehouseName { get; set; } = string.Empty;
+    public DateOnly PurchaseDate { get; set; }
+    public decimal AvailableQtyKundal { get; set; }
+    public decimal BuyPricePerKundal { get; set; }
+    public decimal ExpensesPerKundal { get; set; }
+    public decimal UnitCostPerKundal { get; set; }
+}
+
+public class CropPricingDto
+{
+    public int CropId { get; set; }
+    public string CropName { get; set; } = string.Empty;
+    public string UomName { get; set; } = string.Empty;
+    public decimal KundalFactor { get; set; }
+    public decimal TotalAvailableQtyKundal { get; set; }
+    public decimal WeightedAvgCostPerKundal { get; set; }
+    public List<LotPricingDto> Lots { get; set; } = [];
+}

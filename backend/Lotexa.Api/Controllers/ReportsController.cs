@@ -46,6 +46,10 @@ public class ReportsController : ControllerBase
         return Ok(await _inventoryService.GetAllBreakEvensAsync(ct));
     }
 
+    [HttpGet("pricing")]
+    public async Task<ActionResult<List<CropPricingDto>>> GetPricingAnalysis(CancellationToken ct)
+        => Ok(await _inventoryService.GetPricingAnalysisAsync(ct));
+
     [HttpGet("sale-profit/{saleId}")]
     public async Task<ActionResult<SaleProfitDto>> SaleProfit(int saleId, CancellationToken ct)
     {

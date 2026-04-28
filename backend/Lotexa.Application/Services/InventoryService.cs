@@ -177,8 +177,8 @@ public class InventoryService : IInventoryService
 
                 var uomCode = l.UnitOfMeasure?.Code ?? "kg";
                 var kgFactor = GetKgConversionFactor(uomCode);
-                // kundal = 100 kg; kundalFactor = how many kundals per 1 original UOM
-                var kundalFactor = kgFactor / 100m;
+                // quintal = 100 kg; quintalFactor = how many quintals per 1 original UOM
+                var quintalFactor = kgFactor / 100m;
 
                 var totalExpenses = l.Expenses.Sum(e => e.Amount);
                 var unitCostPerUom = l.BuyPricePerUom + (l.OtherCharges + totalExpenses) / l.Quantity;
@@ -186,32 +186,32 @@ public class InventoryService : IInventoryService
 
                 return (
                     lot: l,
-                    availableQtyKundal: availableQty * kundalFactor,
-                    buyPricePerKundal: l.BuyPricePerUom / kundalFactor,
-                    expensesPerKundal: expensesPerUom / kundalFactor,
-                    unitCostPerKundal: unitCostPerUom / kundalFactor,
-                    kundalFactor,
+                    availableQtyQuintal: availableQty * quintalFactor,
+                    buyPricePerQuintal: l.BuyPricePerUom / quintalFactor,
+                    expensesPerQuintal: expensesPerUom / quintalFactor,
+                    unitCostPerQuintal: unitCostPerUom / quintalFactor,
+                    quintalFactor,
                     uomCode
                 );
             })
-            .Where(x => x.availableQtyKundal > 0)
+            .Where(x => x.availableQtyQuintal > 0)
             .GroupBy(x => new { x.lot.CropId, CropName = x.lot.Crop.Name, UomName = x.lot.UnitOfMeasure?.Name ?? "" })
             .Select(g =>
             {
-                var totalQtyKundal = g.Sum(x => x.availableQtyKundal);
-                var weightedAvgCostPerKundal = totalQtyKundal > 0
-                    ? g.Sum(x => x.availableQtyKundal * x.unitCostPerKundal) / totalQtyKundal
+                var totalQtyQuintal = g.Sum(x => x.availableQtyQuintal);
+                var weightedAvgCostPerQuintal = totalQtyQuintal > 0
+                    ? g.Sum(x => x.availableQtyQuintal * x.unitCostPerQuintal) / totalQtyQuintal
                     : 0;
-                var repKundalFactor = g.First().kundalFactor;
+                var repQuintalFactor = g.First().quintalFactor;
 
                 return new CropPricingDto
                 {
                     CropId = g.Key.CropId,
                     CropName = g.Key.CropName,
                     UomName = g.Key.UomName,
-                    KundalFactor = repKundalFactor,
-                    TotalAvailableQtyKundal = totalQtyKundal,
-                    WeightedAvgCostPerKundal = weightedAvgCostPerKundal,
+                    QuintalFactor = repQuintalFactor,
+                    TotalAvailableQtyQuintal = totalQtyQuintal,
+                    WeightedAvgCostPerQuintal = weightedAvgCostPerQuintal,
                     Lots = g.Select(x => new LotPricingDto
                     {
                         LotId = x.lot.Id,
@@ -219,10 +219,11 @@ public class InventoryService : IInventoryService
                         FarmerName = x.lot.Farmer.Name,
                         WarehouseName = x.lot.Warehouse.Name,
                         PurchaseDate = x.lot.PurchaseDate,
-                        AvailableQtyKundal = x.availableQtyKundal,
-                        BuyPricePerKundal = x.buyPricePerKundal,
-                        ExpensesPerKundal = x.expensesPerKundal,
-                        UnitCostPerKundal = x.unitCostPerKundal
+                        AvailableQtyQuintal = x.availableQtyQuintal,
+                        BuyPricePerQuintal = x.buyPricePerQuintal,
+                        TotalExpenses = x.lot.OtherCharges + x.lot.Expenses.Sum(e => e.Amount),
+                        ExpensesPerQuintal = x.expensesPerQuintal,
+                        UnitCostPerQuintal = x.unitCostPerQuintal
                     })
                     .OrderBy(l => l.PurchaseDate)
                     .ToList()

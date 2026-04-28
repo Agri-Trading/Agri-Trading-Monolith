@@ -35,6 +35,8 @@ public class PreviewAllocationDto
 {
     public string LotNumber { get; set; } = string.Empty;
     public decimal QtyFromLot { get; set; }
+    public decimal BuyPricePerUom { get; set; }
+    public decimal ExpensesPerUom { get; set; }
     public decimal CostPerUom { get; set; }
 }
 
@@ -67,10 +69,11 @@ public class LotPricingDto
     public string FarmerName { get; set; } = string.Empty;
     public string WarehouseName { get; set; } = string.Empty;
     public DateOnly PurchaseDate { get; set; }
-    public decimal AvailableQtyKundal { get; set; }
-    public decimal BuyPricePerKundal { get; set; }
-    public decimal ExpensesPerKundal { get; set; }
-    public decimal UnitCostPerKundal { get; set; }
+    public decimal AvailableQtyQuintal { get; set; }
+    public decimal BuyPricePerQuintal { get; set; }
+    public decimal TotalExpenses { get; set; }
+    public decimal ExpensesPerQuintal { get; set; }
+    public decimal UnitCostPerQuintal { get; set; }
 }
 
 public class CropPricingDto
@@ -78,8 +81,8 @@ public class CropPricingDto
     public int CropId { get; set; }
     public string CropName { get; set; } = string.Empty;
     public string UomName { get; set; } = string.Empty;
-    public decimal KundalFactor { get; set; }
-    public decimal TotalAvailableQtyKundal { get; set; }
-    public decimal WeightedAvgCostPerKundal { get; set; }
+    public decimal QuintalFactor { get; set; }
+    public decimal TotalAvailableQtyQuintal { get; set; }
+    public decimal WeightedAvgCostPerQuintal { get; set; }
     public List<LotPricingDto> Lots { get; set; } = [];
 }

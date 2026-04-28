@@ -137,6 +137,8 @@ export default function PurchasesPage() {
                   <th className="px-4 py-3 font-medium text-right">Qty</th>
                   <th className="px-4 py-3 font-medium text-right">Available</th>
                   <th className="px-4 py-3 font-medium text-right">Buy Price</th>
+                  <th className="px-4 py-3 font-medium text-right">Total Expenses</th>
+                  <th className="px-4 py-3 font-medium text-right">Total Cost</th>
                   <th className="px-4 py-3 font-medium">Date</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                 </tr>
@@ -159,6 +161,12 @@ export default function PurchasesPage() {
                       {lot.availableQty}
                     </td>
                     <td className="px-4 py-3 text-right">{lot.buyPricePerUom}</td>
+                    <td className="px-4 py-3 text-right text-orange-600">
+                      {(lot.otherCharges + lot.expenses.reduce((s, e) => s + e.amount, 0)).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium text-gray-800">
+                      {lot.totalCost.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
                     <td className="px-4 py-3">{lot.purchaseDate}</td>
                     <td className="px-4 py-3">
                       <span

@@ -151,6 +151,8 @@ public class FifoSaleAllocationService : IFifoSaleAllocationService
             {
                 LotNumber = item.Lot.LotNumber,
                 QtyFromLot = allocQty,
+                BuyPricePerUom = item.Lot.BuyPricePerUom,
+                ExpensesPerUom = (item.Lot.OtherCharges + item.Lot.Expenses.Sum(e => e.Amount)) / item.Lot.Quantity,
                 CostPerUom = item.UnitCost
             });
 
